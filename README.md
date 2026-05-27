@@ -3,17 +3,17 @@
 [![CI](https://github.com/omidrahimirad/config-change-validation-tool/actions/workflows/ci.yml/badge.svg)](https://github.com/omidrahimirad/config-change-validation-tool/actions/workflows/ci.yml)
 ![Coverage](https://img.shields.io/badge/coverage-91%25-brightgreen)
 
-A Python-based validation tool for comparing current and planned configuration files, checking the planned change against YAML-defined engineering rules, scoring operational risk, and generating a Markdown change report with approval and rollback guidance.
+Configuration Change Validation Tool is a Python CLI for reviewing planned configuration changes before implementation. It compares current and planned YAML configuration files, applies YAML-defined engineering rules, calculates operational risk, and generates a Markdown report with an approval checklist and rollback recommendation.
 
-The project is designed as a professional portfolio artifact for roles involving telecom, railway infrastructure, industrial networks, system integration, and change management. It uses synthetic configuration data and deliberately simplified rules so the workflow is easy to inspect and test.
+The examples model change-control concerns that appear in telecom, railway infrastructure, industrial networks, and system integration work: recovery access, gateway consistency, maintenance-window readiness, backup status, approval requirements, and rollback planning.
 
 ## Why This Project Exists
 
-Manual configuration reviews often rely on repeated checks: has recovery access been preserved, are gateway and subnet changes consistent, is a rollback plan documented, and does the change need senior approval? In large change windows, hundreds of parameters may be reviewed by hand. This project turns that review pattern into a reproducible CLI workflow.
+Manual configuration reviews often rely on repeated checks: has recovery access been preserved, are gateway and subnet changes consistent, is a rollback plan documented, and does the change need senior approval? In large change windows, many parameters may be reviewed by hand. This project turns that review pattern into a reproducible CLI workflow.
 
 ## Problem Statement
 
-Configuration changes can be technically valid YAML while still being operationally risky. A planned file may parse correctly but remove NTP, change a management address without approval, break gateway reachability, or miss a maintenance window. The goal is to detect those risks before implementation and produce a report that is useful in a change-review conversation.
+Configuration changes can be technically valid YAML while still being operationally risky. A planned file may parse correctly but remove NTP, change a management address without approval, break gateway reachability, or miss a maintenance window. The goal is to detect those risks before implementation and produce a report that supports a clear change-review discussion.
 
 ## Architecture
 
@@ -48,7 +48,7 @@ flowchart LR
 - uv-native dependency management with `pyproject.toml` and `uv.lock`
 - CLI entry points using `uv run python -m change_validator` and `uv run change-validator`
 - Synthetic examples for network, RAN-like, and industrial controller domains
-- Pytest coverage and GitHub Actions CI
+- Ruff, mypy, pytest-cov, and GitHub Actions CI
 
 ## Example Configuration Domains
 
@@ -175,57 +175,21 @@ Preview assets:
 - Report excerpt: [docs/assets/router-site-a-report-preview.md](docs/assets/router-site-a-report-preview.md)
 - Full generated report: [reports/router_site_a_change_report.md](reports/router_site_a_change_report.md)
 
-## Sample Terminal Output
-
-```text
-Validation completed.
-
-Changed fields: 6
-Passed checks: 14
-Failed checks: 3
-Risk score: 75
-Risk level: HIGH
-Decision: REQUIRES SENIOR APPROVAL
-
-Report saved to:
-reports/router_site_a_change_report.md
-```
-
 ## Sample Failed Validation Explanation
 
 The sample router change fails because the management IP changes without approval, the planned gateway is no longer reachable from the planned uplink subnet, and the NTP server list is empty. These are not syntax errors; they are operational risks that could affect recovery access, routing reachability, and event correlation during an incident.
 
-Failed example report: `examples/failed_change_example.md`
+Failed example report: [examples/failed_change_example.md](examples/failed_change_example.md)
 
 ## Sample Approved Validation Explanation
 
 The sample RAN change adjusts PCI, handover margin, TX power, and neighbor relations while staying inside the defined validation limits. It keeps the neighbor list populated, maintains backup and maintenance-window readiness, and has an available rollback plan.
 
-Approved example report: `examples/approved_change_example.md`
+Approved example report: [examples/approved_change_example.md](examples/approved_change_example.md)
 
-## Example Markdown Report Preview
+## Development and QA
 
-```markdown
-# Configuration Change Validation Report
-
-## Change Summary
-- Device/System: RTR-SITE-A-01
-- Environment: production
-- Changed fields: 6
-- Validation status: Failed
-- Risk level: High Risk
-- Final decision: Requires senior approval
-
-## Failed Validation Rules
-| Rule ID | Severity | Description | Finding |
-|---|---|---|---|
-| NET-001 | Critical | Management IP must not change without approval. | management_ip changed without approval. |
-| NET-003 | High | Default gateway must be reachable in the same subnet. | Gateway is outside the planned uplink subnet. |
-```
-
-Full sample report: `reports/sample_change_report.md`
-
-## Test and CI Instructions
+### Linting and Formatting
 
 Run linting and formatting checks:
 
@@ -240,7 +204,7 @@ Format code before committing:
 uv run ruff format .
 ```
 
-## Static Type Checking
+### Static Type Checking
 
 Run mypy against the source package:
 
@@ -248,13 +212,13 @@ Run mypy against the source package:
 uv run mypy src
 ```
 
+### Tests and Coverage
+
 Run tests locally:
 
 ```bash
 uv run pytest -v
 ```
-
-## Test Coverage
 
 Generate terminal and XML coverage reports:
 
@@ -265,6 +229,8 @@ uv run pytest --cov=src/change_validator --cov-report=term-missing --cov-report=
 This writes `coverage.xml` locally and in CI.
 
 The GitHub Actions workflow in `.github/workflows/ci.yml` installs uv, syncs dependencies from `uv.lock`, runs Ruff lint and format checks, runs mypy, runs pytest with coverage reporting, and performs CLI smoke tests on every push and pull request.
+
+### Regenerate Sample Reports
 
 Generate the included sample reports:
 
