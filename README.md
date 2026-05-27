@@ -1,5 +1,7 @@
 # Configuration Change Validation Tool
 
+![Coverage](https://img.shields.io/badge/coverage-91%25-brightgreen)
+
 A Python-based validation tool for comparing current and planned configuration files, checking the planned change against YAML-defined engineering rules, scoring operational risk, and generating a Markdown change report with approval and rollback guidance.
 
 The project is designed as a professional portfolio artifact for roles involving telecom, railway infrastructure, industrial networks, system integration, and change management. It uses synthetic configuration data and deliberately simplified rules so the workflow is easy to inspect and test.
@@ -221,7 +223,17 @@ Run tests locally:
 uv run pytest -v
 ```
 
-The GitHub Actions workflow in `.github/workflows/ci.yml` installs uv, syncs dependencies from `uv.lock`, runs Ruff lint and format checks, runs mypy, runs `uv run pytest -v`, and performs CLI smoke tests on every push and pull request.
+## Test Coverage
+
+Generate terminal and XML coverage reports:
+
+```bash
+uv run pytest --cov=src/change_validator --cov-report=term-missing --cov-report=xml
+```
+
+This writes `coverage.xml` locally and in CI.
+
+The GitHub Actions workflow in `.github/workflows/ci.yml` installs uv, syncs dependencies from `uv.lock`, runs Ruff lint and format checks, runs mypy, runs pytest with coverage reporting, and performs CLI smoke tests on every push and pull request.
 
 Generate the included sample reports:
 
