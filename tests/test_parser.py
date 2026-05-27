@@ -4,7 +4,6 @@ import pytest
 
 from change_validator.parser import load_config
 
-
 ROOT = Path(__file__).resolve().parents[1]
 
 

@@ -18,15 +18,16 @@ def build_approval_checklist(
 ) -> dict[str, str]:
     """Build a practical change-approval checklist."""
     has_critical_or_high = any(
-        str(rule.get("severity", "")).lower() in {"critical", "high"}
-        for rule in failed_rules
+        str(rule.get("severity", "")).lower() in {"critical", "high"} for rule in failed_rules
     )
     return {
         "Backup confirmed": _yes_no(bool(get_value(planned, "backup_required", False))),
         "Maintenance window defined": _yes_no(bool(get_value(planned, "maintenance_window", None))),
         "Rollback plan available": _yes_no(bool(get_value(planned, "rollback_plan", None))),
         "Peer review completed": _yes_no(not failed_rules),
-        "Senior approval required": _yes_no(risk_level in {"High Risk", "Critical Risk"} or has_critical_or_high),
+        "Senior approval required": _yes_no(
+            risk_level in {"High Risk", "Critical Risk"} or has_critical_or_high
+        ),
     }
 
 

@@ -20,6 +20,12 @@ jobs:
       - name: Install dependencies
         run: uv sync --locked --dev --python 3.11
 
+      - name: Run Ruff lint
+        run: uv run ruff check .
+
+      - name: Run Ruff format check
+        run: uv run ruff format --check .
+
       - name: Run tests
         run: uv run pytest -v
 

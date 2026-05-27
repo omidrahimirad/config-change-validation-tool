@@ -118,9 +118,13 @@ def _evaluate_rule(
     if check_type == "required_if_environment_production":
         return _check_required_for_production(field, planned_value, planned)
     if check_type == "requires_rollback_plan":
-        return _check_requires_rollback_plan(field, current_value, planned_value, changed_prefixes, planned)
+        return _check_requires_rollback_plan(
+            field, current_value, planned_value, changed_prefixes, planned
+        )
     if check_type == "required_if_risk_high":
-        return _check_required_if_risk_high(field, planned_value, changed_fields, changed_prefixes, rule)
+        return _check_required_if_risk_high(
+            field, planned_value, changed_fields, changed_prefixes, rule
+        )
 
     return False, f"Unsupported check type: {check_type}"
 
@@ -140,7 +144,9 @@ def _check_range(field: str, value: Any, rule: dict[str, Any]) -> tuple[bool, st
     return True, ""
 
 
-def _check_max_delta(field: str, current_value: Any, planned_value: Any, rule: dict[str, Any]) -> tuple[bool, str]:
+def _check_max_delta(
+    field: str, current_value: Any, planned_value: Any, rule: dict[str, Any]
+) -> tuple[bool, str]:
     max_delta = float(rule.get("max_delta", 0))
     try:
         delta = abs(float(planned_value) - float(current_value))
@@ -148,7 +154,10 @@ def _check_max_delta(field: str, current_value: Any, planned_value: Any, rule: d
         return False, f"{field} current/planned values must be numeric."
 
     passed = delta <= max_delta
-    return passed, "" if passed else f"{field} changes by {delta:g}; allowed delta is {max_delta:g}."
+    return (
+        passed,
+        "" if passed else f"{field} changes by {delta:g}; allowed delta is {max_delta:g}.",
+    )
 
 
 def _check_no_change_without_approval(
@@ -185,7 +194,9 @@ def _check_subnet_consistency(rule: dict[str, Any], planned: dict[str, Any]) -> 
     return False, f"Default gateway {gateway} is not reachable within {network}."
 
 
-def _check_required_for_production(field: str, value: Any, planned: dict[str, Any]) -> tuple[bool, str]:
+def _check_required_for_production(
+    field: str, value: Any, planned: dict[str, Any]
+) -> tuple[bool, str]:
     environment = str(get_value(planned, "environment", "")).lower()
     if environment != "production":
         return True, ""

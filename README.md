@@ -194,13 +194,26 @@ Full sample report: `reports/sample_change_report.md`
 
 ## Test and CI Instructions
 
+Run linting and formatting checks:
+
+```bash
+uv run ruff check .
+uv run ruff format --check .
+```
+
+Format code before committing:
+
+```bash
+uv run ruff format .
+```
+
 Run tests locally:
 
 ```bash
 uv run pytest -v
 ```
 
-The GitHub Actions workflow in `.github/workflows/ci.yml` installs uv, syncs dependencies from `uv.lock`, runs `uv run pytest -v`, and performs CLI smoke tests on every push and pull request.
+The GitHub Actions workflow in `.github/workflows/ci.yml` installs uv, syncs dependencies from `uv.lock`, runs Ruff lint and format checks, runs `uv run pytest -v`, and performs CLI smoke tests on every push and pull request.
 
 Generate the included sample reports:
 
