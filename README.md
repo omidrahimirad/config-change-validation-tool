@@ -35,7 +35,8 @@ Current config
 - Validation categories for schema, safety, network consistency, change risk, operational readiness, and rollback
 - Risk score and approval decision mapping
 - Markdown report generation with change tables and rule results
-- CLI entry point using `python -m change_validator`
+- uv-native dependency management with `pyproject.toml` and `uv.lock`
+- CLI entry points using `uv run python -m change_validator` and `uv run change-validator`
 - Synthetic examples for network, RAN-like, and industrial controller domains
 - Pytest coverage and GitHub Actions CI
 
@@ -109,27 +110,32 @@ Approval decision:
 
 ## CLI Usage
 
-Install dependencies:
+Install uv if needed:
 
 ```bash
-python -m pip install -e .
-python -m pip install -r requirements.txt
+curl -LsSf https://astral.sh/uv/install.sh | sh
+```
+
+Create the project environment from `pyproject.toml` and `uv.lock`:
+
+```bash
+uv sync
 ```
 
 Run the network validation example:
 
 ```bash
-python -m change_validator validate \
+uv run python -m change_validator validate \
   --current configs/current/router_site_a.yaml \
   --planned configs/planned/router_site_a.yaml \
   --rules rules/network_rules.yaml \
   --output reports/router_site_a_change_report.md
 ```
 
-If installed as a package, the console script is also available:
+The console script is also available through uv:
 
 ```bash
-change-validator validate \
+uv run change-validator validate \
   --current configs/current/router_site_a.yaml \
   --planned configs/planned/router_site_a.yaml \
   --rules rules/network_rules.yaml \
@@ -191,27 +197,27 @@ Full sample report: `reports/sample_change_report.md`
 Run tests locally:
 
 ```bash
-pytest -v
+uv run pytest -v
 ```
 
-The GitHub Actions workflow in `.github/workflows/ci.yml` installs dependencies and runs `pytest` on every push and pull request.
+The GitHub Actions workflow in `.github/workflows/ci.yml` installs uv, syncs dependencies from `uv.lock`, runs `uv run pytest -v`, and performs CLI smoke tests on every push and pull request.
 
 Generate the included sample reports:
 
 ```bash
-python -m change_validator validate \
+uv run change-validator validate \
   --current configs/current/router_site_a.yaml \
   --planned configs/planned/router_site_a.yaml \
   --rules rules/network_rules.yaml \
   --output reports/router_site_a_change_report.md
 
-python -m change_validator validate \
+uv run change-validator validate \
   --current configs/current/ran_cell_001.yaml \
   --planned configs/planned/ran_cell_001.yaml \
   --rules rules/ran_rules.yaml \
   --output reports/ran_cell_001_change_report.md
 
-python -m change_validator validate \
+uv run change-validator validate \
   --current configs/current/controller_01.yaml \
   --planned configs/planned/controller_01.yaml \
   --rules rules/system_rules.yaml \
