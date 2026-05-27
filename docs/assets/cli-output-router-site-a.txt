@@ -1,0 +1,11 @@
+Validation completed.
+
+Changed fields: 6
+Passed checks: 14
+Failed checks: 3
+Risk score: 75
+Risk level: HIGH
+Decision: REQUIRES SENIOR APPROVAL
+
+Report saved to:
+reports/router_site_a_change_report.md

@@ -145,6 +145,29 @@ uv run change-validator validate \
   --output reports/router_site_a_change_report.md
 ```
 
+## Report Preview
+
+The failed router example shows how the tool escalates a risky planned change before implementation. It identifies a management IP change without approval, a default gateway/subnet mismatch, and an empty NTP server list.
+
+```text
+Validation completed.
+
+Changed fields: 6
+Passed checks: 14
+Failed checks: 3
+Risk score: 75
+Risk level: HIGH
+Decision: REQUIRES SENIOR APPROVAL
+
+Report saved to:
+reports/router_site_a_change_report.md
+```
+
+Preview assets:
+- CLI output: [docs/assets/cli-output-router-site-a.txt](docs/assets/cli-output-router-site-a.txt)
+- Report excerpt: [docs/assets/router-site-a-report-preview.md](docs/assets/router-site-a-report-preview.md)
+- Full generated report: [reports/router_site_a_change_report.md](reports/router_site_a_change_report.md)
+
 ## Sample Terminal Output
 
 ```text
