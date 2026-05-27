@@ -1,5 +1,6 @@
 # Configuration Change Validation Tool
 
+[![CI](https://github.com/omidrahimirad/config-change-validation-tool/actions/workflows/ci.yml/badge.svg)](https://github.com/omidrahimirad/config-change-validation-tool/actions/workflows/ci.yml)
 ![Coverage](https://img.shields.io/badge/coverage-91%25-brightgreen)
 
 A Python-based validation tool for comparing current and planned configuration files, checking the planned change against YAML-defined engineering rules, scoring operational risk, and generating a Markdown change report with approval and rollback guidance.
