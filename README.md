@@ -305,12 +305,22 @@ This is relevant to engineering work where configuration changes need to be revi
 - Netzwerkbetrieb
 - Technische Dokumentation
 
-## Limitations
+## Known Limitations
 
-- The rules are simplified and synthetic.
-- The tool does not connect to live devices, OSS platforms, industrial controllers, ticketing systems, or CI/CD deployment pipelines.
-- Schema validation is intentionally lightweight and rule-driven instead of using a full JSON Schema model.
-- Risk scoring is deterministic and transparent, but real environments may require service-specific weighting and approval policies.
+This project focuses on demonstrating change-validation logic and operational risk analysis concepts rather than implementing a full production orchestration platform.
+
+- Configuration data is synthetic and intentionally limited to representative network, RAN-like, and controller examples.
+- Validation logic is simplified and rule-driven; it does not model every operational dependency, vendor behavior, or environment-specific exception.
+- The tool does not connect to live routers, OSS platforms, industrial controllers, ticketing systems, approval systems, or deployment pipelines.
+- Rollback output is advisory documentation only; the tool does not execute transactional rollback or device configuration changes.
+- Vendor-specific parsers are not implemented. Inputs are normalized YAML examples rather than native device configuration formats.
+- Schema normalization is limited to the fields used by the example domains and YAML rule files.
+- The YAML rule engine is intentionally compact and transparent, with a small set of supported check types.
+- Approval workflow support is local to the generated report. There is no distributed approval state, authentication, RBAC, or audit-log backend.
+- The project does not include large-scale configuration inventory management, concurrent batch execution, or historical drift tracking.
+- It is not intended for direct production deployment without substantial integration, validation, security review, and environment-specific policy work.
+
+The goal of the project is to model realistic change-control thinking and validation workflows in a reproducible engineering environment.
 
 ## Future Improvements
 
