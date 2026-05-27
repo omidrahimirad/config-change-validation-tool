@@ -1,0 +1,64 @@
+domain: system
+rules:
+  - id: SYS-SCHEMA-001
+    category: schema validation
+    description: System identifier must be present.
+    severity: critical
+    check_type: not_empty
+    field: system_id
+  - id: SYS-SCHEMA-002
+    category: schema validation
+    description: Environment must be present.
+    severity: medium
+    check_type: not_empty
+    field: environment
+  - id: OPS-001
+    category: operational readiness validation
+    description: Production changes require a maintenance window.
+    severity: critical
+    check_type: required_if_environment_production
+    field: maintenance_window
+  - id: OPS-002
+    category: operational readiness validation
+    description: Backup must be confirmed before change.
+    severity: critical
+    check_type: must_equal
+    field: backup_required
+    expected: true
+  - id: OPS-003
+    category: rollback validation
+    description: Rollback plan must exist for high-risk changes.
+    severity: critical
+    check_type: required_if_risk_high
+    field: rollback_plan
+    trigger_fields:
+      - redundancy
+      - remote_access.ssh_enabled
+      - logging_level
+  - id: SYS-001
+    category: safety validation
+    description: Production controllers must keep redundancy enabled.
+    severity: critical
+    check_type: must_equal
+    field: redundancy.mode
+    expected: hot_standby
+  - id: SYS-002
+    category: safety validation
+    description: Remote SSH access must remain available for recovery.
+    severity: critical
+    check_type: must_equal
+    field: remote_access.ssh_enabled
+    expected: true
+  - id: SYS-003
+    category: operational readiness validation
+    description: NTP servers must be configured for controller event correlation.
+    severity: medium
+    check_type: not_empty
+    field: ntp.servers
+  - id: SYS-004
+    category: change-risk validation
+    description: Logging level must remain at the approved production default.
+    severity: low
+    check_type: must_equal
+    field: logging_level
+    expected: DEBUG

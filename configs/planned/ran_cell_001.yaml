@@ -1,0 +1,16 @@
+cell_id: CELL-DE-BER-A-001
+site: Site A - Berlin RAN Rooftop
+environment: production
+band: n78
+pci: 318
+tac: 42110
+max_tx_power_dbm: 45
+handover_margin_db: 4
+neighbor_cells:
+  - CELL-DE-BER-A-002
+  - CELL-DE-BER-B-004
+  - CELL-DE-BER-C-011
+  - CELL-DE-BER-D-021
+backup_required: true
+maintenance_window: "2026-06-08 00:30-02:00 Europe/Berlin"
+rollback_plan: "Reapply previous cell parameters from OSS export and verify neighbor relation counters."

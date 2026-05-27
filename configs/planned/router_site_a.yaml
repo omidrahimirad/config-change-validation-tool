@@ -1,0 +1,39 @@
+device_id: RTR-SITE-A-01
+site: Site A - Berlin Core Access Shelter
+device_type: edge_router
+environment: production
+management_ip: 10.42.10.20
+interfaces:
+  uplink:
+    name: ge-0/0/0
+    vlan: 211
+    mtu: 1600
+    ip_address: 172.16.20.2/24
+  service:
+    name: ge-0/0/1
+    vlan: 310
+    mtu: 1500
+    ip_address: 10.60.1.1/24
+default_gateway: 172.16.10.1
+static_routes:
+  - destination: 10.70.0.0/16
+    next_hop: 172.16.20.254
+  - destination: 10.90.40.0/24
+    next_hop: 172.16.20.253
+ssh:
+  enabled: true
+  allowed_sources:
+    - 10.42.0.0/16
+snmp:
+  enabled: true
+  version: v3
+  allowed_sources:
+    - 10.42.20.0/24
+  contact: noc@example.invalid
+ntp:
+  servers: []
+approval:
+  management_ip_change_approved: false
+backup_required: true
+maintenance_window: "2026-06-07 01:00-03:00 Europe/Berlin"
+rollback_plan: "Restore router startup configuration from pre-change backup and clear candidate route changes."

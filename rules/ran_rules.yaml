@@ -1,0 +1,73 @@
+domain: ran
+rules:
+  - id: RAN-SCHEMA-001
+    category: schema validation
+    description: Cell identifier must be present.
+    severity: critical
+    check_type: not_empty
+    field: cell_id
+  - id: RAN-SCHEMA-002
+    category: schema validation
+    description: Site name must be present.
+    severity: medium
+    check_type: not_empty
+    field: site
+  - id: RAN-001
+    category: safety validation
+    description: PCI must be between 0 and 1007.
+    severity: critical
+    check_type: range
+    field: pci
+    min: 0
+    max: 1007
+  - id: RAN-002
+    category: change-risk validation
+    description: TX power change above 3 dB requires high-risk approval.
+    severity: high
+    check_type: max_delta
+    field: max_tx_power_dbm
+    max_delta: 3
+  - id: RAN-003
+    category: network consistency validation
+    description: Neighbor cell list must not be empty.
+    severity: high
+    check_type: not_empty
+    field: neighbor_cells
+  - id: RAN-004
+    category: rollback validation
+    description: TAC change requires rollback plan.
+    severity: critical
+    check_type: requires_rollback_plan
+    field: tac
+  - id: RAN-005
+    category: operational readiness validation
+    description: Production RAN changes require a maintenance window.
+    severity: critical
+    check_type: required_if_environment_production
+    field: maintenance_window
+  - id: RAN-006
+    category: rollback validation
+    description: Rollback plan must exist for high-risk RAN changes.
+    severity: critical
+    check_type: required_if_risk_high
+    field: rollback_plan
+    trigger_fields:
+      - pci
+      - tac
+      - max_tx_power_dbm
+      - neighbor_cells
+  - id: RAN-007
+    category: operational readiness validation
+    description: Backup must be confirmed before RAN parameter change.
+    severity: critical
+    check_type: must_equal
+    field: backup_required
+    expected: true
+  - id: RAN-008
+    category: network consistency validation
+    description: Handover margin must remain within accepted tuning range.
+    severity: medium
+    check_type: range
+    field: handover_margin_db
+    min: 0
+    max: 10

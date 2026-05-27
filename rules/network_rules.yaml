@@ -1,0 +1,121 @@
+domain: network
+rules:
+  - id: NET-SCHEMA-001
+    category: schema validation
+    description: Device identifier must be present.
+    severity: critical
+    check_type: not_empty
+    field: device_id
+  - id: NET-SCHEMA-002
+    category: schema validation
+    description: Site name must be present.
+    severity: medium
+    check_type: not_empty
+    field: site
+  - id: NET-SCHEMA-003
+    category: schema validation
+    description: Device type must be present.
+    severity: medium
+    check_type: not_empty
+    field: device_type
+  - id: NET-001
+    category: change-risk validation
+    description: Management IP must not change without approval.
+    severity: critical
+    check_type: no_change_without_approval
+    field: management_ip
+    approval_field: approval.management_ip_change_approved
+  - id: NET-002
+    category: network consistency validation
+    description: Uplink MTU must stay between 1280 and 9000.
+    severity: high
+    check_type: range
+    field: interfaces.uplink.mtu
+    min: 1280
+    max: 9000
+  - id: NET-002B
+    category: network consistency validation
+    description: Service MTU must stay between 1280 and 9000.
+    severity: high
+    check_type: range
+    field: interfaces.service.mtu
+    min: 1280
+    max: 9000
+  - id: NET-003
+    category: network consistency validation
+    description: Default gateway must be reachable in the same subnet.
+    severity: high
+    check_type: subnet_consistency
+    field: default_gateway
+    interface_field: interfaces.uplink.ip_address
+    gateway_field: default_gateway
+  - id: NET-004
+    category: safety validation
+    description: SSH must remain enabled for remote recovery.
+    severity: critical
+    check_type: must_equal
+    field: ssh.enabled
+    expected: true
+  - id: NET-005
+    category: safety validation
+    description: SSH allowed source list must not be empty.
+    severity: high
+    check_type: not_empty
+    field: ssh.allowed_sources
+  - id: NET-006
+    category: operational readiness validation
+    description: NTP server list must not be empty.
+    severity: medium
+    check_type: not_empty
+    field: ntp.servers
+  - id: NET-007
+    category: safety validation
+    description: SNMP must use version v3.
+    severity: medium
+    check_type: must_equal
+    field: snmp.version
+    expected: v3
+  - id: NET-008
+    category: safety validation
+    description: SNMP allowed source list must not be empty.
+    severity: medium
+    check_type: not_empty
+    field: snmp.allowed_sources
+  - id: NET-009
+    category: schema validation
+    description: Static route table must not be empty.
+    severity: medium
+    check_type: not_empty
+    field: static_routes
+  - id: NET-010
+    category: rollback validation
+    description: Rollback plan must exist for high-risk network changes.
+    severity: critical
+    check_type: required_if_risk_high
+    field: rollback_plan
+    trigger_fields:
+      - management_ip
+      - default_gateway
+      - interfaces.uplink.ip_address
+      - static_routes
+  - id: NET-011
+    category: operational readiness validation
+    description: Production network changes require a maintenance window.
+    severity: critical
+    check_type: required_if_environment_production
+    field: maintenance_window
+  - id: NET-012
+    category: operational readiness validation
+    description: Backup must be confirmed before network change.
+    severity: critical
+    check_type: must_equal
+    field: backup_required
+    expected: true
+  - id: NET-013
+    category: network consistency validation
+    description: Uplink VLAN must be in operational range.
+    severity: low
+    check_type: range
+    field: interfaces.uplink.vlan
+    min: 2
+    max: 4094

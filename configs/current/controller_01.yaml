@@ -1,0 +1,17 @@
+system_id: CTRL-IND-01
+site: Yard Control Building 1
+environment: production
+redundancy:
+  mode: hot_standby
+  peer: CTRL-IND-02
+backup_required: true
+maintenance_window: "2026-06-09 02:00-04:00 Europe/Berlin"
+logging_level: INFO
+rollback_plan: "Restore controller configuration snapshot and restart standby sync before returning to service."
+ntp:
+  servers:
+    - 10.42.1.10
+    - 10.42.1.11
+remote_access:
+  ssh_enabled: true
+  jump_host: bastion-prod-01
