@@ -17,17 +17,24 @@ Configuration changes can be technically valid YAML while still being operationa
 
 ## Architecture
 
-```text
-Current config
-  -> Planned config
-  -> Validation rules
-  -> Parser
-  -> Diff engine
-  -> Rule engine
-  -> Risk scoring
-  -> Markdown report
-  -> Approval checklist
-  -> Rollback recommendation
+The tool follows a simple validation pipeline: it loads current and planned configurations, computes changes, applies rule-based checks, scores operational risk, and generates an approval-ready Markdown report.
+
+```mermaid
+flowchart LR
+    A[Current Configuration<br/>YAML] --> C[Config Parser]
+    B[Planned Configuration<br/>YAML] --> C
+    R[Validation Rules<br/>YAML] --> E[Rule Engine]
+
+    C --> D[Diff Engine]
+    D --> E
+    E --> F[Risk Scoring]
+    F --> G[Approval Decision]
+    F --> H[Approval Checklist]
+    F --> I[Rollback Recommendation]
+
+    G --> J[Markdown Report]
+    H --> J
+    I --> J
 ```
 
 ## Features
