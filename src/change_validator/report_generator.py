@@ -32,7 +32,7 @@ def _markdown_table(rows: list[dict[str, Any]], columns: list[str]) -> str:
     if not rows:
         return "_None._"
     frame = pd.DataFrame(rows, columns=columns)
-    return frame.to_markdown(index=False)
+    return str(frame.to_markdown(index=False))
 
 
 def generate_report(

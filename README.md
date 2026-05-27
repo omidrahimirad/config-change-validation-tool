@@ -207,13 +207,21 @@ Format code before committing:
 uv run ruff format .
 ```
 
+## Static Type Checking
+
+Run mypy against the source package:
+
+```bash
+uv run mypy src
+```
+
 Run tests locally:
 
 ```bash
 uv run pytest -v
 ```
 
-The GitHub Actions workflow in `.github/workflows/ci.yml` installs uv, syncs dependencies from `uv.lock`, runs Ruff lint and format checks, runs `uv run pytest -v`, and performs CLI smoke tests on every push and pull request.
+The GitHub Actions workflow in `.github/workflows/ci.yml` installs uv, syncs dependencies from `uv.lock`, runs Ruff lint and format checks, runs mypy, runs `uv run pytest -v`, and performs CLI smoke tests on every push and pull request.
 
 Generate the included sample reports:
 
