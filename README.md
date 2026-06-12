@@ -37,6 +37,14 @@ flowchart LR
     I --> J
 ```
 
+## Design Trade-offs
+
+- YAML rules keep validation policy readable and separate from Python code.
+- A CLI keeps the workflow easy to run locally, in CI, and in scripted review processes.
+- Synthetic configuration files make the repository safe to publish while still reflecting realistic review concerns.
+- The risk model is intentionally simple so each approval decision can be traced to failed rule severity.
+- The project focuses on validation and reporting rather than deployment orchestration or live-device changes.
+
 ## Features
 
 - YAML-based current and planned configuration parsing
@@ -260,6 +268,8 @@ uv run change-validator validate \
 
 This is relevant to engineering work where configuration changes need to be reviewed consistently, documented clearly, and approved based on operational impact rather than file syntax alone.
 
+Interview preparation notes are available in [docs/interview_notes.md](docs/interview_notes.md).
+
 ## German Keywords
 
 - Konfigurationsvalidierung
@@ -296,6 +306,17 @@ The goal of the project is to model realistic change-control thinking and valida
 - Export reports to HTML or PDF.
 - Add batch validation for a folder of planned changes.
 - Add baseline health checks from synthetic pre/post-change telemetry files.
+
+## Author
+
+Omid Rahimi
+
+- GitHub: [omidrahimirad](https://github.com/omidrahimirad)
+- LinkedIn: _Add LinkedIn profile URL_
+
+## License
+
+This project is released under the [MIT License](LICENSE).
 
 ## Disclaimer
 
