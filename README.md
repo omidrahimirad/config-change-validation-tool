@@ -3,99 +3,68 @@
 [![CI](https://github.com/omidrahimirad/config-change-validation-tool/actions/workflows/ci.yml/badge.svg)](https://github.com/omidrahimirad/config-change-validation-tool/actions/workflows/ci.yml)
 ![Coverage](https://img.shields.io/badge/coverage-91%25-brightgreen)
 
-Configuration Change Validation Tool is a Python CLI for reviewing planned configuration changes before implementation. It compares current and planned YAML configuration files, applies YAML-defined engineering rules, calculates operational risk, and generates a Markdown report with an approval checklist and rollback recommendation.
+Rule-driven configuration change validation CLI for network, RAN-like, and industrial system examples.
 
-The examples model change-control concerns that appear in telecom, railway infrastructure, industrial networks, and system integration work: recovery access, gateway consistency, maintenance-window readiness, backup status, approval requirements, and rollback planning.
-
-## Why This Project Exists
-
-Manual configuration reviews often rely on repeated checks: has recovery access been preserved, are gateway and subnet changes consistent, is a rollback plan documented, and does the change need senior approval? In large change windows, many parameters may be reviewed by hand. This project turns that review pattern into a reproducible CLI workflow.
+The tool compares current and planned YAML configuration files, applies YAML-defined engineering rules, calculates operational risk, and generates a Markdown report with an approval checklist and rollback recommendation.
 
 ## Problem Statement
 
-Configuration changes can be technically valid YAML while still being operationally risky. A planned file may parse correctly but remove NTP, change a management address without approval, break gateway reachability, or miss a maintenance window. The goal is to detect those risks before implementation and produce a report that supports a clear change-review discussion.
+Configuration changes can be syntactically valid while still being operationally risky. A planned file may parse correctly but remove recovery access, change a management address without approval, break gateway reachability, or miss a maintenance window.
 
-## Architecture
+This project turns repeated manual review checks into a reproducible CLI workflow that produces reviewable evidence before implementation.
 
-The tool follows a simple validation pipeline: it loads current and planned configurations, computes changes, applies rule-based checks, scores operational risk, and generates an approval-ready Markdown report.
+## Why This Project Exists
 
-```mermaid
-flowchart LR
-    A[Current Configuration<br/>YAML] --> C[Config Parser]
-    B[Planned Configuration<br/>YAML] --> C
-    R[Validation Rules<br/>YAML] --> E[Rule Engine]
+Change reviews in integration, telecom, network, and infrastructure environments often depend on consistent pre-checks:
 
-    C --> D[Diff Engine]
-    D --> E
-    E --> F[Risk Scoring]
-    F --> G[Approval Decision]
-    F --> H[Approval Checklist]
-    F --> I[Rollback Recommendation]
+- Is recovery access still available?
+- Are subnet and gateway changes consistent?
+- Is a maintenance window defined?
+- Is a rollback plan documented?
+- Does the change require senior approval?
 
-    G --> J[Markdown Report]
-    H --> J
-    I --> J
-```
+The project demonstrates how those review patterns can be encoded as deterministic rules, tested, and documented without connecting to live systems.
 
-## Design Trade-offs
+## Architecture / Workflow
 
-- YAML rules keep validation policy readable and separate from Python code.
-- A CLI keeps the workflow easy to run locally, in CI, and in scripted review processes.
-- Synthetic configuration files make the repository safe to publish while still reflecting realistic review concerns.
-- The risk model is intentionally simple so each approval decision can be traced to failed rule severity.
-- The project focuses on validation and reporting rather than deployment orchestration or live-device changes.
+![Architecture workflow](docs/images/architecture.svg)
 
-## Features
+The validation pipeline is intentionally compact:
 
-- YAML-based current and planned configuration parsing
-- Recursive diff engine for nested configuration fields
-- Rule files stored in YAML rather than hardcoded into one script
-- Validation categories for schema, safety, network consistency, change risk, operational readiness, and rollback
-- Risk score and approval decision mapping
-- Markdown report generation with change tables and rule results
-- uv-native dependency management with `pyproject.toml` and `uv.lock`
-- CLI entry points using `uv run python -m change_validator` and `uv run change-validator`
-- Synthetic examples for network, RAN-like, and industrial controller domains
-- Ruff, mypy, pytest-cov, and GitHub Actions CI
+1. Load current configuration, planned configuration, and validation rules from YAML.
+2. Parse and normalize the file-based inputs.
+3. Compute changed fields with a recursive diff engine.
+4. Apply rule checks against planned values and detected changes.
+5. Convert failed rule severities into a risk score.
+6. Generate a Markdown report with approval and rollback guidance.
 
-## Example Configuration Domains
+## Supported Validation Domains
+
+The included examples are synthetic and safe to publish, but they reflect practical review concerns from several engineering domains.
 
 Network configuration:
-- `device_id`, `site`, `device_type`, `management_ip`
-- Interfaces with VLAN, MTU, and IP address
-- Default gateway and static routes
+
+- device ID, site, device type, and management IP
+- uplink and service interfaces
+- default gateway and static routes
 - SSH, SNMP, and NTP settings
 
 Telecom / RAN-like configuration:
-- `cell_id`, `site`, `band`, `pci`, `tac`
-- `max_tx_power_dbm`, `handover_margin_db`
-- Neighbor cell list
+
+- cell ID, site, band, PCI, and TAC
+- TX power and handover margin
+- neighbor cell list
 
 System / industrial controller configuration:
-- `system_id`, `environment`, redundancy settings
-- Backup requirement and maintenance window
-- Logging level and rollback plan
 
-## Validation Rule Examples
+- system ID and environment
+- redundancy and backup readiness
+- logging level, maintenance window, and rollback plan
 
-Network rules:
-- `NET-001`: Management IP must not change without approval. Severity: critical.
-- `NET-002`: MTU must stay between 1280 and 9000. Severity: high.
-- `NET-003`: Default gateway must be reachable in the same subnet. Severity: high.
-- `NET-004`: SSH must remain enabled for remote recovery. Severity: critical.
+## Rule Types
 
-RAN rules:
-- `RAN-001`: PCI must be between 0 and 1007. Severity: critical.
-- `RAN-002`: TX power change above 3 dB requires high-risk approval. Severity: high.
-- `RAN-003`: Neighbor cell list must not be empty. Severity: high.
-- `RAN-004`: TAC change requires rollback plan. Severity: critical.
+Rules are stored in YAML and evaluated by the rule engine. Implemented check types:
 
-Operational/system rules:
-- `OPS-001`: Production changes require a maintenance window. Severity: critical.
-- `OPS-002`: Backup must be confirmed before change. Severity: critical.
-- `OPS-003`: Rollback plan must exist for high-risk changes. Severity: critical.
-
-Implemented check types:
 - `range`
 - `must_equal`
 - `not_empty`
@@ -106,27 +75,34 @@ Implemented check types:
 - `requires_rollback_plan`
 - `required_if_risk_high`
 
-## Risk Scoring Logic
+Example rules:
 
-Severity points:
-- critical = 40 points
-- high = 25 points
-- medium = 10 points
-- low = 5 points
+- `NET-001`: Management IP must not change without approval.
+- `NET-003`: Default gateway must be reachable in the same subnet.
+- `RAN-002`: TX power change above 3 dB requires high-risk approval.
+- `OPS-002`: Backup must be confirmed before change.
+
+## Risk Scoring
+
+Failed checks are scored by severity:
+
+| Severity | Points |
+| --- | ---: |
+| Critical | 40 |
+| High | 25 |
+| Medium | 10 |
+| Low | 5 |
 
 Risk levels:
-- 0-20 = Low Risk
-- 21-50 = Medium Risk
-- 51-90 = High Risk
-- 90+ = Critical Risk
 
-Approval decision:
-- Low Risk -> Approved
-- Medium Risk -> Approved with review
-- High Risk -> Requires senior approval
-- Critical Risk -> Rejected / blocked
+| Score | Risk level | Decision |
+| ---: | --- | --- |
+| 0-20 | Low Risk | Approved |
+| 21-50 | Medium Risk | Approved with review |
+| 51-90 | High Risk | Requires senior approval |
+| 90+ | Critical Risk | Rejected / blocked |
 
-## CLI Usage
+## Installation
 
 Install uv if needed:
 
@@ -140,6 +116,8 @@ Create the project environment from `pyproject.toml` and `uv.lock`:
 uv sync
 ```
 
+## CLI Usage
+
 Run the network validation example:
 
 ```bash
@@ -150,7 +128,7 @@ uv run python -m change_validator validate \
   --output reports/router_site_a_change_report.md
 ```
 
-The console script is also available through uv:
+The console entry point is also available through uv:
 
 ```bash
 uv run change-validator validate \
@@ -160,87 +138,7 @@ uv run change-validator validate \
   --output reports/router_site_a_change_report.md
 ```
 
-## Report Preview
-
-The failed router example shows how the tool escalates a risky planned change before implementation. It identifies a management IP change without approval, a default gateway/subnet mismatch, and an empty NTP server list.
-
-```text
-Validation completed.
-
-Changed fields: 6
-Passed checks: 14
-Failed checks: 3
-Risk score: 75
-Risk level: HIGH
-Decision: REQUIRES SENIOR APPROVAL
-
-Report saved to:
-reports/router_site_a_change_report.md
-```
-
-Preview assets:
-- CLI output: [docs/assets/cli-output-router-site-a.txt](docs/assets/cli-output-router-site-a.txt)
-- Report excerpt: [docs/assets/router-site-a-report-preview.md](docs/assets/router-site-a-report-preview.md)
-- Full generated report: [reports/router_site_a_change_report.md](reports/router_site_a_change_report.md)
-
-## Sample Failed Validation Explanation
-
-The sample router change fails because the management IP changes without approval, the planned gateway is no longer reachable from the planned uplink subnet, and the NTP server list is empty. These are not syntax errors; they are operational risks that could affect recovery access, routing reachability, and event correlation during an incident.
-
-Failed example report: [examples/failed_change_example.md](examples/failed_change_example.md)
-
-## Sample Approved Validation Explanation
-
-The sample RAN change adjusts PCI, handover margin, TX power, and neighbor relations while staying inside the defined validation limits. It keeps the neighbor list populated, maintains backup and maintenance-window readiness, and has an available rollback plan.
-
-Approved example report: [examples/approved_change_example.md](examples/approved_change_example.md)
-
-## Development and QA
-
-### Linting and Formatting
-
-Run linting and formatting checks:
-
-```bash
-uv run ruff check .
-uv run ruff format --check .
-```
-
-Format code before committing:
-
-```bash
-uv run ruff format .
-```
-
-### Static Type Checking
-
-Run mypy against the source package:
-
-```bash
-uv run mypy src
-```
-
-### Tests and Coverage
-
-Run tests locally:
-
-```bash
-uv run pytest -v
-```
-
-Generate terminal and XML coverage reports:
-
-```bash
-uv run pytest --cov=src/change_validator --cov-report=term-missing --cov-report=xml
-```
-
-This writes `coverage.xml` locally and in CI.
-
-The GitHub Actions workflow in `.github/workflows/ci.yml` installs uv, syncs dependencies from `uv.lock`, runs Ruff lint and format checks, runs mypy, runs pytest with coverage reporting, and performs CLI smoke tests on every push and pull request.
-
-### Regenerate Sample Reports
-
-Generate the included sample reports:
+Regenerate all included sample reports:
 
 ```bash
 uv run change-validator validate \
@@ -262,50 +160,90 @@ uv run change-validator validate \
   --output reports/controller_01_change_report.md
 ```
 
-## Engineering relevance
+## Example Reports / Output Preview
 
-“This project demonstrates how manual configuration review logic can be translated into a reproducible validation workflow. The focus is not only on parsing files, but on identifying operational risks before implementation: recovery access, rollback readiness, maintenance-window discipline, parameter consistency, and approval requirements.”
+![Markdown report preview](docs/images/report-preview.svg)
 
-This is relevant to engineering work where configuration changes need to be reviewed consistently, documented clearly, and approved based on operational impact rather than file syntax alone.
+The router example flags a risky planned change before implementation. It identifies a management IP change without approval, a default gateway/subnet mismatch, and an empty NTP server list.
+
+```text
+Validation completed.
+
+Changed fields: 6
+Passed checks: 14
+Failed checks: 3
+Risk score: 75
+Risk level: HIGH
+Decision: REQUIRES SENIOR APPROVAL
+
+Report saved to:
+reports/router_site_a_change_report.md
+```
+
+Report artifacts:
+
+- CLI output: [docs/assets/cli-output-router-site-a.txt](docs/assets/cli-output-router-site-a.txt)
+- Report excerpt: [docs/assets/router-site-a-report-preview.md](docs/assets/router-site-a-report-preview.md)
+- Full generated report: [reports/router_site_a_change_report.md](reports/router_site_a_change_report.md)
+- Approved RAN-like example: [examples/approved_change_example.md](examples/approved_change_example.md)
+- Failed network example: [examples/failed_change_example.md](examples/failed_change_example.md)
+- Rollback checklist: [examples/rollback_checklist.md](examples/rollback_checklist.md)
+
+## Development and QA
+
+Run the complete local verification set:
+
+```bash
+uv sync
+uv lock --check
+uv run pytest -v
+uv run pytest --cov=src --cov-report=term-missing
+uv run ruff check .
+uv run ruff format --check .
+uv run mypy src
+```
+
+The GitHub Actions workflow installs uv, syncs dependencies from `uv.lock`, runs Ruff, runs mypy, runs pytest with coverage, and performs CLI smoke tests on every push and pull request.
+
+## Engineering Relevance
+
+This project is relevant to roles where configuration changes need to be reviewed consistently, documented clearly, and approved based on operational impact rather than file syntax alone.
+
+It demonstrates:
+
+- rule-driven validation logic
+- file-based reproducibility
+- CLI automation
+- testable change-control checks
+- risk scoring and approval mapping
+- generated Markdown evidence for review
 
 Interview preparation notes are available in [docs/interview_notes.md](docs/interview_notes.md).
 
-## German Keywords
+Design decisions are documented in [docs/design_tradeoffs.md](docs/design_tradeoffs.md).
 
-- Konfigurationsvalidierung
-- Change Management
-- Qualitätssicherung
-- Systemintegration
-- Fehlervermeidung
-- Rollback-Planung
-- Netzwerkbetrieb
-- Technische Dokumentation
+## Limitations
 
-## Known Limitations
+This is not a production orchestration platform.
 
-This project focuses on demonstrating change-validation logic and operational risk analysis concepts rather than implementing a full production orchestration platform.
-
-- Configuration data is synthetic and intentionally limited to representative network, RAN-like, and controller examples.
-- Validation logic is simplified and rule-driven; it does not model every operational dependency, vendor behavior, or environment-specific exception.
+- Configuration data is synthetic and intentionally limited to representative examples.
+- Inputs are normalized YAML examples, not native vendor configuration formats.
 - The tool does not connect to live routers, OSS platforms, industrial controllers, ticketing systems, approval systems, or deployment pipelines.
-- Rollback output is advisory documentation only; the tool does not execute transactional rollback or device configuration changes.
-- Vendor-specific parsers are not implemented. Inputs are normalized YAML examples rather than native device configuration formats.
-- Schema normalization is limited to the fields used by the example domains and YAML rule files.
-- The YAML rule engine is intentionally compact and transparent, with a small set of supported check types.
-- Approval workflow support is local to the generated report. There is no distributed approval state, authentication, RBAC, or audit-log backend.
-- The project does not include large-scale configuration inventory management, concurrent batch execution, or historical drift tracking.
-- It is not intended for direct production deployment without substantial integration, validation, security review, and environment-specific policy work.
-
-The goal of the project is to model realistic change-control thinking and validation workflows in a reproducible engineering environment.
+- Rollback output is advisory documentation only.
+- There is no authentication, RBAC, distributed approval state, or audit-log backend.
+- The rule engine is intentionally compact and does not model every operational dependency or vendor-specific exception.
 
 ## Future Improvements
 
-- Add JSON input support alongside YAML.
-- Add stricter schema validation for each domain.
-- Add rule tags for change windows, technology owner, and approval group.
-- Export reports to HTML or PDF.
-- Add batch validation for a folder of planned changes.
-- Add baseline health checks from synthetic pre/post-change telemetry files.
+- Vendor-specific parsers
+- Stricter schema validation for each domain
+- Ticket-system integration
+- CI/CD approval gates
+- Audit logs and RBAC
+- Batch validation for many devices
+- Pre/post telemetry checks
+- GitLab/Jenkins integration
+- HTML or PDF report export
 
 ## Author
 
@@ -320,4 +258,4 @@ This project is released under the [MIT License](LICENSE).
 
 ## Disclaimer
 
-“This project uses synthetic configuration data and simplified validation rules. It is inspired by real production change-control workflows, but it is not connected to any live operator, railway, or industrial system.”
+This project uses synthetic configuration data and simplified validation rules. It is inspired by real change-control workflows, but it is not connected to any live operator, railway, or industrial system.

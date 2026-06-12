@@ -1,0 +1,72 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900" role="img" aria-labelledby="title desc">
+  <title id="title">Configuration Change Validation Tool Architecture</title>
+  <desc id="desc">Architecture workflow from current and planned YAML configurations through parsing, diffing, rule validation, risk scoring, Markdown reporting, and approval or rollback recommendation.</desc>
+  <defs>
+    <style>
+      .bg { fill: #111827; }
+      .panel { fill: #172033; stroke: #334155; stroke-width: 2; }
+      .input { fill: #1e293b; stroke: #64748b; stroke-width: 2; }
+      .output { fill: #102a2a; stroke: #2dd4bf; stroke-width: 2; }
+      .text { fill: #e5e7eb; font: 600 30px Inter, Arial, sans-serif; }
+      .subtext { fill: #94a3b8; font: 500 20px Inter, Arial, sans-serif; }
+      .small { fill: #cbd5e1; font: 500 18px Inter, Arial, sans-serif; }
+      .label { fill: #38bdf8; font: 700 18px Inter, Arial, sans-serif; letter-spacing: .5px; }
+      .line { stroke: #64748b; stroke-width: 3; fill: none; marker-end: url(#arrow); }
+      .down { stroke: #38bdf8; stroke-width: 3; fill: none; marker-end: url(#arrow-blue); }
+    </style>
+    <marker id="arrow" markerWidth="14" markerHeight="14" refX="12" refY="7" orient="auto">
+      <path d="M2,2 L12,7 L2,12 Z" fill="#64748b"/>
+    </marker>
+    <marker id="arrow-blue" markerWidth="14" markerHeight="14" refX="12" refY="7" orient="auto">
+      <path d="M2,2 L12,7 L2,12 Z" fill="#38bdf8"/>
+    </marker>
+  </defs>
+
+  <rect class="bg" width="1600" height="900"/>
+  <text x="80" y="82" class="text">Configuration Change Validation Tool</text>
+  <text x="80" y="118" class="subtext">Rule-driven offline validation workflow for planned configuration changes</text>
+
+  <rect x="80" y="185" rx="10" ry="10" width="320" height="112" class="input"/>
+  <text x="114" y="235" class="text">Current Config</text>
+  <text x="114" y="266" class="subtext">YAML baseline</text>
+
+  <rect x="80" y="355" rx="10" ry="10" width="320" height="112" class="input"/>
+  <text x="114" y="405" class="text">Planned Config</text>
+  <text x="114" y="436" class="subtext">YAML change candidate</text>
+
+  <rect x="80" y="525" rx="10" ry="10" width="320" height="112" class="input"/>
+  <text x="114" y="575" class="text">Validation Rules</text>
+  <text x="114" y="606" class="subtext">YAML policy checks</text>
+
+  <rect x="520" y="252" rx="10" ry="10" width="300" height="98" class="panel"/>
+  <text x="565" y="310" class="text">Config Parser</text>
+
+  <rect x="520" y="432" rx="10" ry="10" width="300" height="98" class="panel"/>
+  <text x="574" y="490" class="text">Diff Engine</text>
+
+  <rect x="520" y="612" rx="10" ry="10" width="300" height="98" class="panel"/>
+  <text x="574" y="670" class="text">Rule Engine</text>
+
+  <rect x="970" y="252" rx="10" ry="10" width="330" height="98" class="panel"/>
+  <text x="1028" y="310" class="text">Risk Scoring</text>
+
+  <rect x="970" y="432" rx="10" ry="10" width="330" height="98" class="panel"/>
+  <text x="1010" y="490" class="text">Markdown Report</text>
+
+  <rect x="970" y="612" rx="10" ry="10" width="330" height="98" class="output"/>
+  <text x="1008" y="670" class="text">Approval / Rollback</text>
+
+  <path d="M400 241 L520 301" class="line"/>
+  <path d="M400 411 L520 301" class="line"/>
+  <path d="M400 581 L520 661" class="line"/>
+  <path d="M670 350 L670 432" class="down"/>
+  <path d="M670 530 L670 612" class="down"/>
+  <path d="M820 661 C890 661 900 301 970 301" class="line"/>
+  <path d="M1135 350 L1135 432" class="down"/>
+  <path d="M1135 530 L1135 612" class="down"/>
+
+  <text x="535" y="178" class="label">PARSER</text>
+  <text x="535" y="768" class="small">Loads normalized YAML examples and preserves file-based reproducibility.</text>
+  <text x="970" y="178" class="label">VALIDATION OUTPUT</text>
+  <text x="970" y="768" class="small">Produces a reviewable Markdown artifact for change-control discussions.</text>
+</svg>

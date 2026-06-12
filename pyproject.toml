@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "config-change-validation-tool"
 version = "0.1.0"
-description = "Rule-driven configuration change validation for synthetic network, RAN, and system examples."
+description = "Rule-driven configuration change validation CLI for network, RAN-like, and industrial system examples."
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
